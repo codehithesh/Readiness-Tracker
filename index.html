@@ -1,0 +1,558 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="color-scheme" content="light dark">
+<title>Readiness</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500..800&family=Source+Sans+3:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#F2F5F3;--card:#FFFFFF;--ink:#16262B;--mute:#5B6E73;--line:#D6DEDC;
+  --accent:#0E7C6B;--accent-ink:#FFFFFF;--warn:#B7791F;--low:#B4463A;--band:rgba(14,124,107,.13);
+  --disp:"Bricolage Grotesque",ui-rounded,"Segoe UI",system-ui,sans-serif;
+  --body:"Source Sans 3",system-ui,-apple-system,"Segoe UI",sans-serif;
+}
+@media (prefers-color-scheme:dark){
+  :root{--bg:#0F1719;--card:#172226;--ink:#E4EDEE;--mute:#92A6AB;--line:#26373C;
+    --accent:#3FC5AE;--accent-ink:#06201B;--warn:#E2A94B;--low:#E57B6D;--band:rgba(63,197,174,.15);}
+}
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.45 var(--body);padding-top:env(safe-area-inset-top,0px)}
+#app{max-width:640px;margin:0 auto;padding:0 14px calc(92px + env(safe-area-inset-bottom,0px))}
+.top{display:flex;justify-content:space-between;align-items:baseline;padding:16px 2px 8px}
+.brand{font:700 22px var(--disp);letter-spacing:-.01em}
+#clock{color:var(--mute);font-size:14px}
+h3{font:600 17px var(--disp);margin:0 0 8px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:14px;margin:12px 0}
+.card.flat{border:0;background:transparent;padding:0}
+.hero{display:flex;gap:14px;align-items:center;margin:6px 0 2px}
+.score{display:flex;align-items:baseline;gap:2px;min-width:112px}
+.num{font:800 76px/0.9 var(--disp);letter-spacing:-.04em}
+.of{color:var(--mute);font-size:15px}
+.rtxt{display:flex;flex-direction:column;gap:2px;font-size:15px}
+.rtxt b{font:700 20px var(--disp)}
+.mute,.note{color:var(--mute);font-size:14px}
+.note{margin:6px 0}
+.chart{touch-action:pan-y;user-select:none;-webkit-user-select:none;margin:8px -4px 0}
+.chart svg{display:block;width:100%;height:auto}
+.grid{stroke:var(--line);stroke-width:1}
+.thr{stroke:var(--accent);stroke-width:1;stroke-dasharray:3 4;opacity:.7}
+.ax{fill:var(--mute);font-size:10.5px}
+.line{fill:none;stroke:var(--accent);stroke-width:2.5;stroke-linejoin:round;stroke-linecap:round}
+.line.fut{stroke-dasharray:2 5}
+.line.alt{stroke:var(--warn);stroke-width:1.5;opacity:.8;stroke-dasharray:none}
+.nowline{stroke:var(--ink);stroke-width:1;opacity:.55}
+.insp{stroke:var(--accent);stroke-width:1.5}
+.win{fill:var(--band)}
+.dot-caffeine{fill:var(--warn)}.dot-activity{fill:var(--accent)}.dot-meal{fill:var(--mute)}
+.dot-mental{fill:var(--low)}.dot-recover{fill:#5B8DEF}
+.feelpt{fill:var(--card);stroke:var(--ink);stroke-width:2}
+button,input,select,textarea{font:inherit;color:inherit}
+button{border:1px solid var(--line);background:var(--card);border-radius:9px;padding:9px 12px;cursor:pointer;min-height:42px}
+button.primary{background:var(--accent);color:var(--accent-ink);border-color:var(--accent);font-weight:600}
+button.ghost{border-color:transparent;color:var(--accent);padding:6px 8px;min-height:0;font-weight:600}
+button.x{border:0;color:var(--mute);padding:4px 6px;min-height:0;font-size:13px}
+button:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+label{display:block;margin:10px 0 0;font-size:14px;color:var(--mute)}
+label input,label select,label textarea,textarea{display:block;width:100%;margin-top:4px;padding:10px;border:1px solid var(--line);border-radius:9px;background:var(--bg);font-size:16px}
+.row{display:flex;gap:8px;align-items:flex-end;flex-wrap:wrap}
+.row>*{flex:1 1 90px}
+.row button{flex:0 0 auto}
+.chips{display:flex;gap:6px;flex-wrap:wrap;margin-top:8px}
+.chip{border-radius:999px;padding:8px 14px;min-height:40px}
+.chip[aria-pressed="true"]{background:var(--accent);color:var(--accent-ink);border-color:var(--accent);font-weight:600}
+.feel{display:grid;grid-template-columns:repeat(5,1fr);gap:6px}
+.feel button{padding:8px 2px;font-size:13px;line-height:1.2}
+.feel b{display:block;font:700 18px var(--disp)}
+ul{list-style:none;padding:0;margin:0}
+.ev li{display:flex;justify-content:space-between;gap:8px;padding:7px 0;border-top:1px solid var(--line);font-size:15px}
+.ev li:first-child{border-top:0}
+.ev .t{color:var(--mute);min-width:48px}
+.banner{background:var(--card);border:1px solid var(--warn);border-radius:12px;padding:10px 12px;margin:10px 0;display:flex;gap:10px;align-items:center;justify-content:space-between}
+.brow{display:flex;gap:10px;justify-content:space-between;align-items:center;padding:10px 0;border-top:1px solid var(--line)}
+.brow:first-of-type{border-top:0}
+.bmain{display:flex;flex-direction:column;gap:2px;min-width:0}
+.gains{display:flex;gap:6px;margin-top:2px}
+.gains span{min-width:38px;text-align:center;padding:2px 6px;border-radius:6px;background:var(--bg);font-size:14px;font-variant-numeric:tabular-nums}
+.gains .pos{color:var(--accent);font-weight:600}.gains .neg{color:var(--low);font-weight:600}
+.task{padding:9px 0;border-top:1px solid var(--line);display:grid;grid-template-columns:1fr auto;gap:2px 8px}
+.task:first-child{border-top:0}
+.task label{margin:0;color:var(--ink);font-size:16px;display:flex;gap:8px;align-items:center}
+.task input{width:20px;height:20px;margin:0;padding:0}
+.task .note{grid-column:1}
+.done{text-decoration:line-through;color:var(--mute)}
+.coach{white-space:pre-wrap;margin-top:10px;font-size:15px}
+fieldset{border:1px solid var(--line);border-radius:10px;margin:12px 0 0;padding:4px 12px 12px}
+legend{padding:0 6px;font-weight:600;font-size:14px}
+.chk{display:flex;gap:8px;align-items:center;color:var(--ink)}
+.chk input{width:20px;height:20px;margin:0}
+details{margin-top:6px}summary{cursor:pointer;font-weight:600;padding:6px 0}
+details li{margin:5px 0;font-size:14px;color:var(--mute)}
+.tabs{position:fixed;left:0;right:0;bottom:0;background:var(--card);border-top:1px solid var(--line);display:flex;justify-content:center;padding:6px 8px calc(6px + env(safe-area-inset-bottom,0px))}
+.tabs>div{display:flex;gap:4px;width:100%;max-width:640px}
+.tabs button{flex:1;border:0;background:transparent;border-radius:9px;font-weight:600;color:var(--mute);min-height:46px}
+.tabs button[aria-current="page"]{color:var(--accent);background:var(--band)}
+#toast{position:fixed;left:50%;bottom:calc(76px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);background:var(--ink);color:var(--bg);padding:9px 14px;border-radius:9px;font-size:14px;opacity:0;pointer-events:none;transition:opacity .2s;max-width:90%}
+#toast.show{opacity:1}
+progress{width:100%;margin-top:8px}
+@media (prefers-reduced-motion:reduce){#toast{transition:none}}
+</style>
+</head>
+<body>
+<div id="app">
+  <header class="top"><div class="brand">Readiness</div><div id="clock"></div></header>
+  <main>
+    <section id="tab-today" class="tab"></section>
+    <section id="tab-boost" class="tab" hidden></section>
+    <section id="tab-log" class="tab" hidden></section>
+    <section id="tab-setup" class="tab" hidden></section>
+  </main>
+  <p class="note" style="margin-top:18px">A planning heuristic built on estimated effects. It is not a medical tool and does not measure your body.</p>
+</div>
+<nav class="tabs" aria-label="Sections"><div>
+  <button data-tab="today">Today</button>
+  <button data-tab="boost">Plan</button>
+  <button data-tab="log">Log</button>
+  <button data-tab="setup">Setup</button>
+</div></nav>
+<div id="toast" role="status"></div>
+
+<script>
+(()=>{
+'use strict';
+const $=(s,r=document)=>r.querySelector(s),$$=(s,r=document)=>[...r.querySelectorAll(s)];
+const esc=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const clamp=(x,a=0,b=100)=>Math.max(a,Math.min(b,x));
+const gauss=(x,c,s)=>Math.exp(-((x-c)**2)/(2*s*s));
+const H=36e5,pad=n=>String(n).padStart(2,'0');
+const fmtT=ts=>{const d=new Date(ts);return pad(d.getHours())+':'+pad(d.getMinutes());};
+const dayKey=(d=new Date())=>d.getFullYear()+'-'+pad(d.getMonth()+1)+'-'+pad(d.getDate());
+const toTs=(k,hm)=>new Date(k+'T'+hm+':00').getTime();
+const hh=hm=>{const [a,b]=hm.split(':').map(Number);return a+b/60;};
+const uid=()=>Math.random().toString(36).slice(2,9);
+
+/* ---------- state ---------- */
+const KEY='readiness.v1',KKEY='readiness.keys.v1';
+const def=()=>({profile:{weightKg:75,unit:'kg',sleepH:7.5,sleepQ:3,wake:'07:00',bed:'23:00',dayKey:dayKey()},events:[],tasks:[],calib:{offset:0,on:false},
+  ai:{active:'openai',remember:false,openai:{base:'https://api.openai.com/v1',model:'gpt-4o-mini'},deepseek:{base:'https://api.deepseek.com',model:'deepseek-chat'}}});
+let S=(()=>{const d=def();try{const r=JSON.parse(localStorage.getItem(KEY)||'null');if(r){const a=r.ai||{};
+  return {...d,...r,profile:{...d.profile,...r.profile},calib:{...d.calib,...r.calib},ai:{...d.ai,...a,openai:{...d.ai.openai,...a.openai},deepseek:{...d.ai.deepseek,...a.deepseek}}};}}catch(e){}return d;})();
+let keys={openai:'',deepseek:''};
+try{if(S.ai.remember){const k=JSON.parse(localStorage.getItem(KKEY)||'null');if(k)keys={...keys,...k};}}catch(e){}
+const save=()=>{try{S.events=S.events.filter(e=>e.ts>Date.now()-14*864e5);localStorage.setItem(KEY,JSON.stringify(S));
+  if(S.ai.remember)localStorage.setItem(KKEY,JSON.stringify(keys));else localStorage.removeItem(KKEY);}catch(e){}};
+
+/* ---------- ==MODEL START== ---------- */
+function context(now=Date.now()){
+  const p=S.profile;let wake=toTs(dayKey(new Date(now)),p.wake);if(wake>now)wake-=864e5;
+  let bed=toTs(dayKey(new Date(wake)),p.bed);if(bed<=wake+4*H)bed+=864e5;
+  return {p,wake,bed};
+}
+const BASE=p=>{const s=Math.min(p.sleepH/8,1);return 100*(0.35+0.65*s)*Math.min(1,0.88+0.03*p.sleepQ);};
+const sugarFx=dt=>6*Math.exp(-dt/0.4)-5*(1-Math.exp(-dt/0.4))*Math.exp(-dt/1.5);
+function mealFx(k,dt){
+  if(k==='light')return 4*Math.exp(-dt/3);
+  if(k==='balanced')return 6*Math.exp(-dt/3.5)-2*gauss(dt,1,0.6);
+  if(k==='heavy')return 4*Math.exp(-dt/3)-8*gauss(dt,1.1,0.7);
+  return sugarFx(dt);
+}
+function recFx(e,dt){
+  switch(e.kind){
+    case 'breath':return 3*Math.exp(-dt/1);
+    case 'walk':return 5*Math.exp(-dt/1.5);
+    case 'daylight':return 4*Math.exp(-dt/2);
+    case 'water':return 2*Math.exp(-dt/1.5);
+    case 'nap':return e.min<=30?10*Math.exp(-dt/3):8*Math.exp(-dt/4)-8*Math.exp(-dt/0.5);
+  }
+  return 0;
+}
+const caffAt=(t,evs)=>{let L=0;for(const e of evs){if(e.type!=='caffeine'||e.ts>t)continue;const dt=(t-e.ts)/H;L+=e.mg*(1-Math.exp(-4.6*dt))*Math.exp(-0.1386*dt);}return L;};
+function model(t,evs,c){
+  const p=c.p,h=Math.max(0,(t-c.wake)/H);
+  const ws=new Date(c.wake);ws.setHours(0,0,0,0);
+  const tod=(t-ws.getTime())/H,sh=(hh(p.wake)-7)*0.8;
+  const rate=2.6+Math.max(0,8-p.sleepH)*0.12;
+  let r=BASE(p)-rate*h-12*Math.exp(-h/0.5)*(p.sleepH<7?1.2:1)
+    +6*gauss(tod,10.5+sh,2.5)+5*gauss(tod,18.5+sh,1.8)-9*gauss(tod,14.5+sh,1.3)
+    -Math.max(0,tod-(22+sh))*2.5;
+  let lastMeal=c.wake;
+  for(const e of evs){
+    if(e.ts>t)continue;const dt=(t-e.ts)/H;
+    switch(e.type){
+      case 'activity':{const hr=e.min/60,load=Math.max(0,(e.met-1)*hr);
+        r-=Math.min(30,1.5*load)*(0.55+0.45*Math.exp(-dt/5));
+        if(e.met>=2.5&&e.met<=7)r+=6*Math.min(hr,1)*Math.exp(-dt/2);break;}
+      case 'mental':{const k=[0.7,1,1.4][e.lvl-1]||1;r-=Math.min(25,3.5*k*e.min/60)*(0.6+0.4*Math.exp(-dt/3));break;}
+      case 'meal':lastMeal=Math.max(lastMeal,e.ts);r+=mealFx(e.kind,dt);break;
+      case 'caffeine':if(e.sugar)r+=sugarFx(dt);break;
+      case 'recover':r+=recFx(e,dt);break;
+    }
+  }
+  const gap=(t-lastMeal)/H;if(gap>4.5)r-=Math.min(7,(gap-4.5)*2.2);
+  const L=caffAt(t,evs),r0=r,f=0.45*(1-Math.exp(-L/75));
+  r=r0+f*Math.max(0,92-r0);
+  const off=S.calib.on?S.calib.offset:0;
+  return {r:clamp(r+off),r0:clamp(r0+off),L};
+}
+/* ---------- ==MODEL END== ---------- */
+
+const stateOf=v=>v>=75?['High','Good time for your hardest work.']:v>=60?['Workable','Fine for focused work. Do not stack too much.']:v>=45?['Low','Routine tasks. Recover before anything hard.']:['Depleted','Protect sleep and keep today light.'];
+const series=(c,evs,step=10)=>{const o=[];for(let t=c.wake;t<=c.bed+H;t+=step*6e4)o.push({t,...model(t,evs,c)});return o;};
+function windows(c,ser,thr=70,from=0){const w=[];let cur=null;
+  for(const s of ser){if(s.t<from-6e5)continue;
+    if(s.r>=thr){if(!cur)cur={a:s.t,b:s.t,pk:s.r};cur.b=s.t;cur.pk=Math.max(cur.pk,s.r);}
+    else if(cur){w.push(cur);cur=null;}}
+  if(cur)w.push(cur);return w.filter(x=>x.b-x.a>=20*6e4);}
+function bestSlot(c,ser,min){
+  const n=Math.max(1,Math.round(min/10)),now=Date.now();let best=null;
+  for(let i=0;i<ser.length-n;i++){const s=ser[i];
+    if(s.t<now-5*6e4||s.t<c.wake+0.5*H)continue;if(ser[i+n].t>c.bed)break;
+    const avg=ser.slice(i,i+n+1).reduce((a,x)=>a+x.r,0)/(n+1);
+    if(!best||avg>best.avg)best={t:s.t,avg};}
+  return best;}
+
+const CANDS=[
+  {id:'walk',label:'Brisk walk, 10 min',min:10,ev:{type:'recover',kind:'walk'}},
+  {id:'daylight',label:'Daylight outside, 10 min',min:10,ev:{type:'recover',kind:'daylight'}},
+  {id:'water',label:'Glass of water',min:1,ev:{type:'recover',kind:'water'}},
+  {id:'breath',label:'Slow breathing, 5 min',min:5,ev:{type:'recover',kind:'breath'}},
+  {id:'snack',label:'Light snack',min:5,ev:{type:'meal',kind:'light'}},
+  {id:'nap',label:'Nap, 20 min',min:20,ev:{type:'recover',kind:'nap',min:20}},
+  {id:'coffee',label:'Coffee, 95 mg',min:5,ev:{type:'caffeine',mg:95,name:'Coffee',kcal:5}},
+  {id:'energy',label:'Energy drink, 160 mg + sugar',min:2,ev:{type:'caffeine',mg:160,sugar:true,name:'Energy drink',kcal:110}}
+];
+function boosters(c){
+  const now=Date.now(),T=[.5,1,2,4],base=T.map(x=>model(now+x*H,S.events,c).r),cut=c.bed-8*H;
+  return CANDS.map(k=>{
+    const ev={...k.ev,ts:now,id:'h'},evs=S.events.concat([ev]);
+    const gains=T.map((x,i)=>model(now+x*H,evs,c).r-base[i]);let flag='',pen=0;
+    if(k.ev.type==='caffeine'){
+      if(now>cut){flag='Past your caffeine cutoff. Likely to cost sleep.';pen=6;}
+      else flag='About '+Math.round(caffAt(c.bed,evs)-caffAt(c.bed,S.events))+' mg still active at bedtime';}
+    if(k.id==='nap'&&now>toTs(dayKey(),'15:30')){flag='After 15:30 a nap can cut into night sleep.';pen=6;}
+    return {...k,gains,flag,score:(gains[0]+gains[1]+gains[2])/3+0.5*gains[3]-pen};
+  }).sort((a,b)=>b.score-a.score);
+}
+
+/* ---------- data helpers ---------- */
+const ACT=[['Walking, slow (2.8)',2.8],['Walking, moderate (3.5)',3.5],['Walking, brisk (4.3)',4.3],['Hiking (6.0)',6],['Jogging (7.0)',7],['Running, 6 mph (9.8)',9.8],
+  ['Cycling, leisure (4.0)',4],['Cycling, moderate (8.0)',8],['Swimming laps (5.8)',5.8],['Strength training (5.0)',5],['HIIT or circuit (8.0)',8],['Yoga (2.5)',2.5],
+  ['Stretching (2.3)',2.3],['Dancing (5.0)',5],['Rowing machine (7.0)',7],['Elliptical (5.0)',5],['Housework (3.3)',3.3],['Basketball (6.5)',6.5]];
+const CAF=[['Coffee, 8 oz',95,0,5],['Espresso shot',63,0,5],['Black tea',47,0,2],['Green tea',28,0,2],['Cola, 12 oz',34,1,140],
+  ['Energy drink with sugar, 16 oz',160,1,110],['Energy drink, sugar-free',160,0,10],['Pre-workout scoop',200,0,10],['Custom',0,0,0]];
+const REC={breath:['Slow breathing, 5 min','breath'],walk:['Brisk walk, 10 min','walk'],daylight:['Daylight outside, 10 min','daylight'],water:['Glass of water','water'],nap20:['Nap, 20 min','nap',20],nap90:['Nap, 90 min','nap',90]};
+const MEAL={light:'Light snack',balanced:'Balanced meal',heavy:'Heavy meal',sugary:'Sugary snack or drink'};
+const netKcal=e=>e.kcal!=null?e.kcal:(e.met-1)*S.profile.weightKg*e.min/60;
+function evText(e){
+  switch(e.type){
+    case 'activity':return `${e.name||'Activity'}, ${e.min} min, about ${Math.round(netKcal(e))} kcal`;
+    case 'caffeine':return `${e.name||'Caffeine'}, ${e.mg} mg${e.sugar?' with sugar':''}`;
+    case 'meal':return `${MEAL[e.kind]||'Meal'}${e.kcal?', '+e.kcal+' kcal':''}`;
+    case 'mental':return `${e.name||'Mental work'}, ${e.min} min (${['light','steady','deep focus'][e.lvl-1]})`;
+    case 'recover':return e.name||({breath:'Slow breathing',walk:'Brisk walk',daylight:'Daylight',water:'Water',nap:'Nap '+e.min+' min'}[e.kind]);
+    case 'feel':return `Check-in ${e.rating}/5 (model said ${Math.round(e.pred)})`;
+  }return '';
+}
+const dayEvents=c=>S.events.filter(e=>e.ts>=c.wake-3*H&&e.ts<=Date.now()+6e4).sort((a,b)=>a.ts-b.ts);
+const tsFromTime=hm=>{let ts=toTs(dayKey(),hm||fmtT(Date.now()));if(ts>Date.now()+12e4)ts-=864e5;return ts;};
+function calStats(){const f=S.events.filter(e=>e.type==='feel'&&e.pred!=null),n=f.length;
+  return {n,gap:n?f.reduce((a,e)=>a+(e.rating*20-10-e.pred),0)/n:0};}
+let tt;function toast(m){const t=$('#toast');t.textContent=m;t.classList.add('show');clearTimeout(tt);tt=setTimeout(()=>t.classList.remove('show'),2600);}
+
+/* ---------- views ---------- */
+let tab='today',inspect=null,coachOut='',coachQ='',logType='activity',hk=null;
+function setTab(t){tab=t;$$('.tab').forEach(s=>s.hidden=s.id!=='tab-'+t);
+  $$('.tabs button').forEach(b=>b.setAttribute('aria-current',b.dataset.tab===t?'page':'false'));
+  ({today:renderToday,boost:renderBoost,log:renderLog,setup:renderSetup})[t]();window.scrollTo(0,0);}
+
+function renderReadout(){
+  const c=context(),now=Date.now(),t=inspect??now,m=model(t,S.events,c),st=stateOf(m.r),d=Math.round(model(t+H,S.events,c).r-m.r);
+  const el=$('#readout');if(!el)return;
+  el.innerHTML=`<div class="score"><span class="num">${Math.round(m.r)}</span><span class="of">/100</span></div>
+  <div class="rtxt"><b>${st[0]}</b><span class="mute">${inspect?fmtT(t)+(t>now?' (projected)':''):'Now'}</span><span>${st[1]}</span>
+  <span class="mute">${d===0?'Flat':d>0?'Rising '+d:'Falling '+(-d)} over the next hour${m.L>5?'. Without caffeine: '+Math.round(m.r0):''}</span></div>
+  ${inspect?'<button class="ghost" data-act="now">Now</button>':''}`;
+}
+function drawChart(){
+  const box=$('#chart');if(!box)return;
+  const c=context(),ser=series(c,S.events),W=Math.max(280,box.clientWidth),Ht=200,m={l:30,r:10,t:12,b:26};
+  const x0=c.wake,x1=c.bed+H,X=t=>m.l+(t-x0)/(x1-x0)*(W-m.l-m.r),Y=v=>m.t+(1-v/100)*(Ht-m.t-m.b),now=Date.now();
+  const P=(a,k)=>a.map((s,i)=>(i?'L':'M')+X(s.t).toFixed(1)+' '+Y(s[k]).toFixed(1)).join('');
+  const past=ser.filter(s=>s.t<=now),fut=ser.filter(s=>s.t>=now-6e5);
+  let g='';
+  for(const w of windows(c,ser,70,0))g+=`<rect class="win" x="${X(w.a)}" y="${m.t}" width="${Math.max(2,X(w.b)-X(w.a))}" height="${Ht-m.t-m.b}"/>`;
+  for(const v of [0,25,50,75,100])g+=`<line class="grid" x1="${m.l}" x2="${W-m.r}" y1="${Y(v)}" y2="${Y(v)}"/><text class="ax" x="${m.l-6}" y="${Y(v)+3}" text-anchor="end">${v}</text>`;
+  g+=`<line class="thr" x1="${m.l}" x2="${W-m.r}" y1="${Y(70)}" y2="${Y(70)}"/>`;
+  const f0=new Date(x0);f0.setMinutes(0,0,0);
+  for(let t=f0.getTime()+H;t<x1;t+=H){const d=new Date(t);if(d.getHours()%3===0)g+=`<text class="ax" x="${X(t)}" y="${Ht-8}" text-anchor="middle">${pad(d.getHours())}:00</text>`;}
+  const evs=dayEvents(c);
+  if(evs.some(e=>e.type==='caffeine'))g+=`<path class="line alt" d="${P(ser,'r0')}"/>`;
+  g+=`<path class="line" d="${P(past,'r')}"/>`;
+  if(now<x1)g+=`<path class="line fut" d="${P(fut,'r')}"/>`;
+  for(const e of evs){if(e.type==='feel')g+=`<circle class="feelpt" cx="${X(e.ts)}" cy="${Y(e.rating*20-10)}" r="4.5"/>`;
+    else g+=`<circle class="dot-${e.type}" cx="${X(e.ts)}" cy="${Y(0)-6}" r="3"/>`;}
+  if(now>=x0&&now<=x1)g+=`<line class="nowline" x1="${X(now)}" x2="${X(now)}" y1="${m.t}" y2="${Y(0)}"/>`;
+  if(inspect!=null)g+=`<line class="insp" x1="${X(inspect)}" x2="${X(inspect)}" y1="${m.t}" y2="${Y(0)}"/>`;
+  box.innerHTML=`<svg viewBox="0 0 ${W} ${Ht}" role="img" aria-label="Predicted readiness through the day">${g}</svg>`;
+}
+function windowText(c,ser){
+  const w=windows(c,ser,70,Date.now());
+  if(w.length)return 'Above 70, good for hard work: '+w.map(x=>`${fmtT(x.a)} to ${fmtT(x.b)}`).join(', ')+'.';
+  const fut=ser.filter(s=>s.t>=Date.now());if(!fut.length)return 'The day is nearly over. Protect sleep.';
+  const b=fut.reduce((a,s)=>s.r>a.r?s:a);return `No stretch above 70 left today. Best remaining: ${fmtT(b.t)} at ${Math.round(b.r)}.`;
+}
+function renderToday(){
+  const c=context(),ser=series(c,S.events),el=$('#tab-today'),evs=dayEvents(c),cs=calStats();
+  const act=evs.filter(e=>e.type==='activity'),net=act.reduce((a,e)=>a+netKcal(e),0),rest=act.reduce((a,e)=>a+S.profile.weightKg*e.min/60,0);
+  const intake=evs.filter(e=>e.type!=='activity'&&e.kcal).reduce((a,e)=>a+e.kcal,0);
+  const mg=evs.filter(e=>e.type==='caffeine').reduce((a,e)=>a+e.mg,0);
+  el.innerHTML=`
+  ${S.profile.dayKey!==dayKey()?'<div class="banner"><span>New day. Update last night\'s sleep for an accurate score.</span><button data-act="go" data-id="setup">Update</button></div>':''}
+  <div class="hero" id="readout"></div>
+  <div class="chart" id="chart"></div>
+  <p class="note">Drag across the chart to see any time of day. Dashed after now means projected from what you have logged. Shaded means above 70. ${esc(windowText(c,ser))}</p>
+  <div class="card"><h3>How do you feel right now?</h3>
+    <div class="feel">${['Drained','Low','Okay','Good','Sharp'].map((l,i)=>`<button data-act="feel" data-id="${i+1}"><b>${i+1}</b>${l}</button>`).join('')}</div>
+    <p class="note">${cs.n?`${cs.n} check-ins so far. You rate yourself ${Math.abs(Math.round(cs.gap))} points ${cs.gap<0?'below':'above'} the model on average.`:'A few check-ins a day let the model learn how far off it is for you.'}</p></div>
+  <div class="card"><h3>Calories and caffeine</h3>
+    <p style="margin:4px 0">Activity burn above resting: <b>${Math.round(net)} kcal</b> <span class="mute">(${Math.round(net+rest)} including resting during the activity)</span></p>
+    <p style="margin:4px 0">Intake you logged with drinks and food: <b>${Math.round(intake)} kcal</b></p>
+    <p class="note">This is not a full energy balance, since resting burn is not included. Estimates run 20 to 30% off.</p>
+    <p style="margin:4px 0">Caffeine today: <b>${mg} mg</b>${mg>400?' <span style="color:var(--low)">above the 400 mg/day adult guideline</span>':''}. For tonight's sleep, last dose before <b>${fmtT(c.bed-8*H)}</b>.</p></div>
+  <div class="card"><h3>Today's log</h3>${evs.length?`<ul class="ev">${evs.slice().reverse().map(e=>`<li><span class="t">${fmtT(e.ts)}</span><span style="flex:1">${esc(evText(e))}</span><button class="x" data-act="del" data-id="${e.id}">Remove</button></li>`).join('')}</ul>`:'<p class="note">Nothing logged yet. Use the Log tab.</p>'}</div>`;
+  renderReadout();drawChart();
+  const box=$('#chart'),setFrom=e=>{const r=box.getBoundingClientRect(),cc=context();
+    inspect=clamp(cc.wake+((e.clientX-r.left-30)/(r.width-40))*((cc.bed+H)-cc.wake),cc.wake,cc.bed+H);renderReadout();drawChart();};
+  box.addEventListener('pointerdown',e=>{try{box.setPointerCapture(e.pointerId);}catch(_){}setFrom(e);});
+  box.addEventListener('pointermove',e=>{if(e.buttons||e.pressure>0)setFrom(e);});
+}
+
+function renderBoost(){
+  const c=context(),el=$('#tab-boost'),ser=series(c,S.events),bs=boosters(c),nowM=model(Date.now(),S.events,c);
+  el.innerHTML=`
+  <div class="card"><h3>Get up to speed</h3>
+    <p class="note">Readiness is ${Math.round(nowM.r)} now. Numbers are points gained if you do it now, shown for +30 min, +1 h, +2 h, +4 h. Fixed rules compute these, not the AI.</p>
+    ${bs.map(b=>`<div class="brow"><div class="bmain"><b>${b.label}</b><span class="note" style="margin:0">${esc(b.flag||b.min+' min')}</span>
+      <div class="gains">${b.gains.map(x=>`<span class="${x>0.5?'pos':x<-0.5?'neg':''}">${x>0?'+':''}${Math.round(x)}</span>`).join('')}</div></div>
+      <button data-act="boost" data-id="${b.id}">Log it</button></div>`).join('')}</div>
+  <div class="card"><h3>Tasks</h3>
+    <p class="note">Ticking a task done logs it as mental work that ended now, so your score reflects it.</p>
+    ${S.tasks.length?`<ul>${S.tasks.map(t=>{const sl=!t.done&&t.effort!=='light'?bestSlot(c,ser,t.min):null;
+      return `<li class="task"><label><input type="checkbox" data-act="tick" data-id="${t.id}" ${t.done?'checked':''}><span class="${t.done?'done':''}">${esc(t.name)}</span></label>
+      <button class="x" data-act="deltask" data-id="${t.id}">Remove</button>
+      <span class="note" style="margin:0">${t.effort}, ${t.min} min${sl?`. Best start ${fmtT(sl.t)}, average ${Math.round(sl.avg)}`:t.effort==='light'&&!t.done?'. Fine any time above 45':''}</span></li>`;}).join('')}</ul>`:''}
+    <div class="row" style="margin-top:10px"><label>Task<input id="tname" placeholder="Write the proposal"></label>
+      <label>Effort<select id="teff"><option value="hard">Hard</option><option value="medium" selected>Medium</option><option value="light">Light</option></select></label>
+      <label>Minutes<input id="tmin" type="number" inputmode="numeric" min="5" step="5" value="60"></label>
+      <button class="primary" data-act="addtask">Add</button></div>
+    ${S.tasks.some(t=>t.done)?'<button class="ghost" data-act="cleardone">Clear finished</button>':''}</div>
+  <div class="card"><h3>Coach</h3>
+    <p class="note">Optional. Uses the provider and key from Setup. It reads the numbers and explains. It never changes them.</p>
+    <textarea id="coachQ" rows="2" placeholder="What are you deciding? (optional)">${esc(coachQ)}</textarea>
+    <div style="margin-top:8px"><button class="primary" data-act="coach">Ask coach</button></div>
+    <div class="coach" id="coachOut">${esc(coachOut)}</div></div>`;
+}
+
+function renderLog(){
+  const types=[['activity','Activity'],['caffeine','Caffeine'],['meal','Food'],['mental','Mental work'],['recover','Recovery']];
+  $('#tab-log').innerHTML=`<div class="chips">${types.map(([k,l])=>`<button class="chip" data-act="logtype" data-id="${k}" aria-pressed="${logType===k}">${l}</button>`).join('')}</div><div class="card" id="logform"></div>`;
+  renderLogForm();
+}
+function renderLogForm(){
+  let b='';
+  if(logType==='activity')b=`<label>Activity<select id="f-act">${ACT.map((a,i)=>`<option value="${i}">${a[0]}</option>`).join('')}</select></label>
+    <label>Duration, minutes<input id="f-min" type="number" inputmode="numeric" min="1" value="30"></label>
+    <label>Watch calories, if you have them (optional)<input id="f-kcal" type="number" inputmode="numeric" min="0" placeholder="kcal"></label><p class="note" id="f-prev"></p>`;
+  if(logType==='caffeine')b=`<label>Source<select id="f-src">${CAF.map((a,i)=>`<option value="${i}">${a[0]}</option>`).join('')}</select></label>
+    <label>Caffeine, mg<input id="f-mg" type="number" inputmode="numeric" min="0" value="${CAF[0][1]}"></label>
+    <label>Calories (optional)<input id="f-kcal" type="number" inputmode="numeric" min="0" value="${CAF[0][3]}"></label>
+    <label class="chk"><input id="f-sugar" type="checkbox"> Contains a lot of sugar</label>`;
+  if(logType==='meal')b=`<label>Type<select id="f-kind">${Object.entries(MEAL).map(([k,v])=>`<option value="${k}">${v}</option>`).join('')}</select></label>
+    <label>Calories (optional)<input id="f-kcal" type="number" inputmode="numeric" min="0"></label>`;
+  if(logType==='mental')b=`<label>Duration, minutes<input id="f-min" type="number" inputmode="numeric" min="5" step="5" value="60"></label>
+    <label>Intensity<select id="f-lvl"><option value="1">Light, routine</option><option value="2" selected>Steady focus</option><option value="3">Deep focus, hard thinking</option></select></label>`;
+  if(logType==='recover')b=`<label>What<select id="f-rec">${Object.entries(REC).map(([k,v])=>`<option value="${k}">${v[0]}</option>`).join('')}</select></label>`;
+  $('#logform').innerHTML=b+`<label>Time it ended or happened<input id="f-time" type="time" value="${fmtT(Date.now())}"></label><div style="margin-top:12px"><button class="primary" data-act="addlog">Add to log</button></div>`;
+  prevAct();
+}
+function prevAct(){const p=$('#f-prev');if(!p)return;const a=ACT[+$('#f-act').value],m=+$('#f-min').value||0,w=S.profile.weightKg;
+  p.textContent=`About ${Math.round((a[1]-1)*w*m/60)} kcal above resting (${Math.round(a[1]*w*m/60)} in total). Estimates run 20 to 30% off.`;}
+function addLog(){
+  const ts=tsFromTime($('#f-time').value);let e={id:uid(),ts};
+  if(logType==='activity'){const a=ACT[+$('#f-act').value],min=+$('#f-min').value,k=+$('#f-kcal').value;if(!(min>0))return toast('Enter a duration');
+    e={...e,type:'activity',name:a[0].replace(/ \(.*\)/,''),met:a[1],min,...(k>0?{kcal:k}:{})};}
+  if(logType==='caffeine'){const mg=+$('#f-mg').value,k=+$('#f-kcal').value;if(!(mg>=0))return toast('Enter caffeine in mg');
+    e={...e,type:'caffeine',name:CAF[+$('#f-src').value][0],mg,sugar:$('#f-sugar').checked,...(k>0?{kcal:k}:{})};}
+  if(logType==='meal'){const k=+$('#f-kcal').value;e={...e,type:'meal',kind:$('#f-kind').value,...(k>0?{kcal:k}:{})};}
+  if(logType==='mental'){const min=+$('#f-min').value;if(!(min>0))return toast('Enter a duration');e={...e,type:'mental',min,lvl:+$('#f-lvl').value};}
+  if(logType==='recover'){const r=REC[$('#f-rec').value];e={...e,type:'recover',name:r[0],kind:r[1],...(r[2]?{min:r[2]}:{})};}
+  S.events.push(e);save();toast('Added. Readiness now '+Math.round(model(Date.now(),S.events,context()).r));
+}
+
+function renderSetup(){
+  const p=S.profile,w=p.unit==='kg'?p.weightKg:p.weightKg*2.20462,cs=calStats(),a=S.ai;
+  $('#tab-setup').innerHTML=`
+  <div class="card"><h3>Your day</h3>
+    <label>Body weight<div class="row"><input id="p-w" type="number" inputmode="decimal" step="0.1" value="${w.toFixed(1)}"><select id="p-u"><option value="kg"${p.unit==='kg'?' selected':''}>kg</option><option value="lb"${p.unit==='lb'?' selected':''}>lb</option></select></div></label>
+    <label>Sleep last night, hours<input id="p-s" type="number" inputmode="decimal" step="0.25" min="0" max="14" value="${p.sleepH}"></label>
+    <label>Sleep quality<select id="p-q">${['Poor','Restless','Okay','Good','Excellent'].map((l,i)=>`<option value="${i+1}"${p.sleepQ===i+1?' selected':''}>${i+1}, ${l}</option>`).join('')}</select></label>
+    <label>Woke up at<input id="p-wake" type="time" value="${p.wake}"></label>
+    <label>Target bedtime<input id="p-bed" type="time" value="${p.bed}"></label>
+    <div style="margin-top:12px"><button class="primary" data-act="saveprofile">Save for today</button></div></div>
+
+  <div class="card"><h3>Import from Apple Health</h3>
+    <ol class="note" style="padding-left:18px;margin:6px 0"><li>Health app, tap your picture, Export All Health Data.</li><li>In Files, tap the zip to unzip it, then pick <b>export.xml</b> below.</li></ol>
+    <input id="hkfile" type="file" accept=".xml,text/xml"><progress id="hkprog" max="1" value="0" hidden></progress>
+    <div id="hkout" class="note">Read on your device. Nothing is uploaded. Large exports can take a minute. Imports last night's sleep and today's workouts.</div></div>
+
+  <div class="card"><h3>AI coach keys (optional)</h3>
+    <p class="note">The score never depends on AI. Keys are sent only to the provider you choose, straight from this browser. Use a key with a low spend limit. If a provider blocks browser requests you will see a network error.</p>
+    <label>Active provider<select id="a-act"><option value="openai"${a.active==='openai'?' selected':''}>OpenAI-compatible</option><option value="deepseek"${a.active==='deepseek'?' selected':''}>DeepSeek</option></select></label>
+    ${['openai','deepseek'].map(k=>`<fieldset><legend>${k==='openai'?'OpenAI-compatible (OpenAI, OpenRouter, Groq, others)':'DeepSeek'}</legend>
+      <label>API key<input id="k-${k}" type="password" autocomplete="off" value="${esc(keys[k])}" placeholder="sk-..."></label>
+      <label>Base URL<input id="b-${k}" value="${esc(a[k].base)}"></label>
+      <label>Model<input id="m-${k}" value="${esc(a[k].model)}"></label></fieldset>`).join('')}
+    <label class="chk" style="margin-top:12px"><input id="a-rem" type="checkbox"${a.remember?' checked':''}> Remember keys on this device (stored unencrypted in this browser)</label>
+    <div class="row" style="margin-top:10px"><button class="primary" data-act="saveai">Save</button><button data-act="testai">Test</button><button data-act="clearkeys">Clear keys</button></div>
+    <div id="aiout" class="note"></div></div>
+
+  <div class="card"><h3>Tune it to you</h3>
+    <p class="note">${cs.n?`${cs.n} check-ins in 14 days. You rate yourself ${Math.abs(Math.round(cs.gap))} points ${cs.gap<0?'below':'above'} the model on average.`:'No check-ins yet. Use the buttons on the Today tab.'} Offset in use: ${S.calib.on?(S.calib.offset>0?'+':'')+Math.round(S.calib.offset):'none'}.</p>
+    <div class="row"><button data-act="calapply"${cs.n<3?' disabled':''}>Apply offset</button><button data-act="calreset">Remove offset</button></div></div>
+
+  <div class="card"><h3>Your data</h3><p class="note">Everything lives in this browser.</p>
+    <div class="row"><button data-act="export">Download JSON</button><button data-act="wipe">Delete everything</button></div></div>
+
+  <div class="card"><details><summary>How the score works</summary><ul>
+    <li>Start of day: set by sleep hours and quality. Short sleep lowers the start and speeds the afternoon decline.</li>
+    <li>Through the day: steady decline with time awake, a short wake-up fog, a late-morning lift, an after-lunch dip and an early-evening lift.</li>
+    <li>Exercise: costs energy, partly recovering over about 5 hours. Light to moderate sessions give a short lift.</li>
+    <li>Mental work: costs energy by hours and intensity, partly recovering over about 3 hours.</li>
+    <li>Caffeine: hides part of the tiredness for as long as it is active (half-life 5 hours). It does not add energy. The dashed amber line shows the score without it.</li>
+    <li>Food: balanced meals help for a few hours, heavy meals dip, sugar spikes then dips. Long gaps without eating lower the score.</li>
+    <li>Recovery: walks, daylight, water, naps and slow breathing each give a small lift.</li>
+    <li>All effect sizes are estimates, not measured values. The check-ins exist so you can see how far off they are for you.</li></ul></details></div>`;
+}
+
+/* ---------- Apple Health ---------- */
+const HKMET={Running:9.8,Walking:3.5,Cycling:7.5,Swimming:5.8,Yoga:2.5,HighIntensityIntervalTraining:8,TraditionalStrengthTraining:5,FunctionalStrengthTraining:5,Hiking:6,Elliptical:5,Rowing:7,Dance:5,CoreTraining:4,Pilates:3,Basketball:6.5};
+const hkDate=s=>{const m=/(\d{4}-\d\d-\d\d) (\d\d:\d\d:\d\d) ([+-]\d\d)(\d\d)/.exec(s||'');return m?new Date(`${m[1]}T${m[2]}${m[3]}:${m[4]}`).getTime():NaN;};
+const attr=(s,n)=>{const m=new RegExp('\\b'+n+'="([^"]*)"').exec(s);return m?m[1]:null;};
+async function parseHealth(file,prog){
+  const cut=dayKey(new Date(Date.now()-3*864e5)),rd=file.stream().getReader(),dec=new TextDecoder();
+  let buf='',read=0;const sl=[],wk=[];
+  const re=/<Record type="HKCategoryTypeIdentifierSleepAnalysis"[^>]*>|<Workout [^>]*>/g;
+  const scan=txt=>{re.lastIndex=0;let m;while((m=re.exec(txt))){const tag=m[0],end=attr(tag,'endDate');if(!end||end.slice(0,10)<cut)continue;
+    const a=hkDate(attr(tag,'startDate')),b=hkDate(end);
+    if(tag.startsWith('<Record')){if(!/Asleep/.test(attr(tag,'value')||''))continue;if(b>a)sl.push([a,b]);}
+    else{const typ=(attr(tag,'workoutActivityType')||'Other').replace('HKWorkoutActivityType','');let min=parseFloat(attr(tag,'duration')||'0');
+      const du=attr(tag,'durationUnit');if(du==='sec')min/=60;else if(du==='hr')min*=60;const kc=parseFloat(attr(tag,'totalEnergyBurned')||'');
+      wk.push({start:a,end:b,name:typ.replace(/([A-Z])/g,' $1').trim(),min:min||(b-a)/6e4,met:HKMET[typ]||4,kcal:isNaN(kc)?null:kc});}}};
+  for(;;){const {done,value}=await rd.read();if(done)break;read+=value.length;buf+=dec.decode(value,{stream:true});
+    const i=buf.lastIndexOf('>');if(i<0)continue;scan(buf.slice(0,i+1));buf=buf.slice(i+1);prog(read/file.size);await new Promise(r=>setTimeout(r));}
+  scan(buf);
+  sl.sort((x,y)=>x[0]-y[0]);const ses=[];
+  for(const [a,b] of sl){const L=ses[ses.length-1];if(L&&a<=L.end+60*6e4){L.end=Math.max(L.end,b);L.iv.push([a,b]);}else ses.push({start:a,end:b,iv:[[a,b]]});}
+  for(const s of ses){let tot=0,cs=-1,ce=-1;for(const [a,b] of s.iv){if(a>ce){if(ce>cs)tot+=ce-cs;cs=a;ce=b;}else ce=Math.max(ce,b);}if(ce>cs)tot+=ce-cs;s.hours=tot/H;}
+  const recent=ses.filter(s=>s.end>Date.now()-36*H),sleep=recent.filter(s=>s.hours>=3).pop()||recent.pop()||null;
+  const t0=new Date();t0.setHours(0,0,0,0);const seen=new Set();
+  const workouts=wk.filter(w=>w.end>=t0.getTime()&&!seen.has(w.start)&&seen.add(w.start));
+  return {sleep,workouts};
+}
+
+/* ---------- AI ---------- */
+const SYS="You are a planning coach inside a readiness tracker. The readiness scores are computed by fixed code and are heuristics, not measurements. Never recompute, adjust or contradict the numbers. Use only the data provided. Reply in under 130 words: one line on the current state; when to do each pending task, using the suggested start times unless they conflict; at most two actions from best_boosters_now; one warning only if caffeine timing or sleep matters. No medical claims.";
+async function chat(which,messages){
+  const cfg=S.ai[which],key=keys[which];
+  if(!key)throw new Error('No API key saved for '+(which==='openai'?'the OpenAI-compatible provider':'DeepSeek')+'. Add one in Setup.');
+  let res;
+  try{res=await fetch(cfg.base.replace(/\/+$/,'')+'/chat/completions',{method:'POST',headers:{'Content-Type':'application/json','Authorization':'Bearer '+key},body:JSON.stringify({model:cfg.model,messages})});}
+  catch(e){throw new Error('Request failed before reaching the provider. Check your connection, the base URL, or whether the provider allows browser (CORS) requests.');}
+  if(!res.ok){const t=await res.text();throw new Error('Provider returned '+res.status+': '+t.slice(0,220));}
+  const j=await res.json();return j.choices?.[0]?.message?.content||'(empty reply)';
+}
+function snapshot(q){
+  const c=context(),now=Date.now(),ser=series(c,S.events),m=model(now,S.events,c),evs=dayEvents(c);
+  return {question:q||'Plan the rest of my day.',time_now:fmtT(now),readiness_now:Math.round(m.r),readiness_without_caffeine:Math.round(m.r0),state:stateOf(m.r)[0],
+    forecast_if_nothing_else_logged:[1,2,3,4].map(x=>({at:fmtT(now+x*H),score:Math.round(model(now+x*H,S.events,c).r)})),
+    windows_above_70:windows(c,ser,70,now).map(w=>fmtT(w.a)+'-'+fmtT(w.b)),
+    sleep:{hours:S.profile.sleepH,quality_1to5:S.profile.sleepQ,woke:S.profile.wake,bedtime:S.profile.bed},
+    caffeine:{mg_today:evs.filter(e=>e.type==='caffeine').reduce((a,e)=>a+e.mg,0),mg_active_now:Math.round(m.L),cutoff_for_tonight:fmtT(c.bed-8*H)},
+    log_today:evs.map(e=>fmtT(e.ts)+' '+evText(e)),
+    pending_tasks:S.tasks.filter(t=>!t.done).map(t=>{const b=t.effort==='light'?null:bestSlot(c,ser,t.min);return {name:t.name,effort:t.effort,minutes:t.min,suggested_start:b?fmtT(b.t)+' (avg '+Math.round(b.avg)+')':null};}),
+    best_boosters_now:boosters(c).slice(0,3).map(b=>({action:b.label,gain_30min:Math.round(b.gains[0]),gain_1h:Math.round(b.gains[1]),note:b.flag}))};
+}
+
+/* ---------- events ---------- */
+document.addEventListener('click',async ev=>{
+  const el=ev.target.closest('[data-act]');if(!el)return;const act=el.dataset.act,id=el.dataset.id;
+  switch(act){
+    case 'go':setTab(id);break;
+    case 'now':inspect=null;renderReadout();drawChart();break;
+    case 'feel':{const r=+id,m=model(Date.now(),S.events,context());
+      S.events.push({id:uid(),ts:Date.now(),type:'feel',rating:r,pred:m.r-(S.calib.on?S.calib.offset:0)});save();renderToday();toast('Check-in saved');break;}
+    case 'del':S.events=S.events.filter(e=>e.id!==id);S.tasks.forEach(t=>{if(!S.events.some(e=>e.taskId===t.id))t.done=false;});save();renderToday();break;
+    case 'logtype':logType=id;renderLog();break;
+    case 'addlog':addLog();break;
+    case 'boost':{const k=CANDS.find(x=>x.id===id);S.events.push({...k.ev,id:uid(),ts:Date.now(),name:k.ev.name||k.label});save();toast('Logged');renderBoost();break;}
+    case 'addtask':{const n=$('#tname').value.trim();if(!n)return toast('Name the task');
+      S.tasks.push({id:uid(),name:n,effort:$('#teff').value,min:Math.max(5,+$('#tmin').value||60),done:false});save();renderBoost();break;}
+    case 'tick':{const t=S.tasks.find(x=>x.id===id);t.done=el.checked;S.events=S.events.filter(e=>e.taskId!==id);
+      if(t.done)S.events.push({id:uid(),ts:Date.now(),type:'mental',min:t.min,lvl:{hard:3,medium:2,light:1}[t.effort],taskId:id,name:t.name});save();renderBoost();break;}
+    case 'deltask':S.tasks=S.tasks.filter(t=>t.id!==id);save();renderBoost();break;
+    case 'cleardone':S.tasks=S.tasks.filter(t=>!t.done);save();renderBoost();break;
+    case 'coach':{const out=$('#coachOut');coachQ=$('#coachQ').value;el.disabled=true;out.textContent='Thinking...';
+      try{coachOut=await chat(S.ai.active,[{role:'system',content:SYS},{role:'user',content:JSON.stringify(snapshot(coachQ))}]);}
+      catch(e){coachOut='Could not reach the coach. '+e.message;}
+      el.disabled=false;if($('#coachOut'))$('#coachOut').textContent=coachOut;break;}
+    case 'saveprofile':{const u=$('#p-u').value,w=parseFloat($('#p-w').value),p=S.profile;if(!(w>0))return toast('Enter your weight');
+      p.unit=u;p.weightKg=u==='kg'?w:w/2.20462;p.sleepH=clamp(parseFloat($('#p-s').value)||0,0,14);p.sleepQ=+$('#p-q').value;p.wake=$('#p-wake').value||'07:00';p.bed=$('#p-bed').value||'23:00';p.dayKey=dayKey();
+      save();toast('Saved');break;}
+    case 'saveai':case 'testai':{const a=S.ai;a.active=$('#a-act').value;a.remember=$('#a-rem').checked;
+      for(const k of ['openai','deepseek']){keys[k]=$('#k-'+k).value.trim();a[k].base=$('#b-'+k).value.trim()||def().ai[k].base;a[k].model=$('#m-'+k).value.trim()||def().ai[k].model;}
+      save();const out=$('#aiout');
+      if(act==='saveai'){out.textContent='Saved.';break;}
+      out.textContent='Testing...';
+      try{const r=await chat(a.active,[{role:'user',content:'Reply with the single word OK.'}]);out.textContent='Connected. Reply: '+r.slice(0,40);}
+      catch(e){out.textContent=e.message;}break;}
+    case 'clearkeys':keys={openai:'',deepseek:''};try{localStorage.removeItem(KKEY);}catch(_){}renderSetup();toast('Keys cleared');break;
+    case 'applyhk':{if(!hk)return;const p=S.profile;
+      if(hk.sleep){p.sleepH=Math.round(hk.sleep.hours*4)/4;p.wake=fmtT(hk.sleep.end);p.dayKey=dayKey();}
+      hk.workouts.forEach(w=>{if(!S.events.some(e=>e.id==='hk'+w.start))S.events.push({id:'hk'+w.start,ts:w.end,type:'activity',name:w.name,met:w.met,min:Math.round(w.min),...(w.kcal?{kcal:Math.round(w.kcal)}:{})});});
+      save();toast('Imported');setTab('today');break;}
+    case 'calapply':{const cs=calStats();S.calib={on:true,offset:clamp(cs.gap*cs.n/(cs.n+5),-20,20)};save();renderSetup();toast('Offset applied');break;}
+    case 'calreset':S.calib={on:false,offset:0};save();renderSetup();break;
+    case 'export':{const b=new Blob([JSON.stringify(S,null,2)],{type:'application/json'}),a=document.createElement('a');a.href=URL.createObjectURL(b);a.download='readiness-data.json';a.click();setTimeout(()=>URL.revokeObjectURL(a.href),2000);break;}
+    case 'wipe':if(confirm('Delete all logs, tasks, settings and saved keys on this device?')){try{localStorage.removeItem(KEY);localStorage.removeItem(KKEY);}catch(_){}S=def();keys={openai:'',deepseek:''};renderSetup();toast('Deleted');}break;
+  }
+});
+document.addEventListener('input',ev=>{
+  const t=ev.target;
+  if(t.id==='coachQ')coachQ=t.value;
+  if(t.id==='f-act'||t.id==='f-min')prevAct();
+});
+document.addEventListener('change',async ev=>{
+  const t=ev.target;
+  if(t.id==='f-src'){const a=CAF[+t.value];$('#f-mg').value=a[1];$('#f-kcal').value=a[3]||'';$('#f-sugar').checked=!!a[2];}
+  if(t.id==='f-act')prevAct();
+  if(t.id==='hkfile'&&t.files[0]){
+    const pr=$('#hkprog'),out=$('#hkout');pr.hidden=false;pr.value=0;out.textContent='Reading...';
+    try{hk=await parseHealth(t.files[0],v=>pr.value=v);pr.hidden=true;
+      const s=hk.sleep,w=hk.workouts;
+      out.innerHTML=`<p>${s?`Sleep: <b>${s.hours.toFixed(1)} h</b>, ${fmtT(s.start)} to ${fmtT(s.end)}.`:'No recent sleep found.'}<br>${w.length?'Workouts today: '+w.map(x=>esc(x.name)+' '+Math.round(x.min)+' min').join(', ')+'.':'No workouts today.'}</p>${s||w.length?'<button class="primary" data-act="applyhk">Use this data</button>':''}`;}
+    catch(e){pr.hidden=true;out.textContent='Could not read that file. Pick export.xml from the unzipped folder.';}
+  }
+});
+$$('.tabs button').forEach(b=>b.addEventListener('click',()=>setTab(b.dataset.tab)));
+window.addEventListener('resize',()=>{if(tab==='today')drawChart();});
+const tick=()=>{$('#clock').textContent=new Date().toLocaleDateString([],{weekday:'short',month:'short',day:'numeric'})+' · '+fmtT(Date.now());
+  if(tab==='today'&&$('#chart')){renderReadout();drawChart();}};
+setInterval(tick,60000);tick();setTab('today');
+})();
+</script>
+</body>
+</html>
